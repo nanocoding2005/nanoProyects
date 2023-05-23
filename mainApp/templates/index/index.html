@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+{% load static %}
+{% load jsonfilters%}
+
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="{% static 'css.css' %}">
+  <meta charset="UTF-8">
+  <title>Nano Projects</title>
+</head>
+<body>
+<h1 onmouseover="extendHeader()" onmouseleave="retractHeader()">
+  <p>
+    <a href="https://github.com/nanocoding2005" target="_blank">
+      <img src="{% static '2111612.png' %}" alt="Github" class="github"/>
+    </a>
+  </p>
+  <p class="nano" id="texto_header">
+    N a n o P r o j e c t s
+  </p>
+  <p>
+    <a href="https://twitter.com/nano_coding" target="_blank">
+      <img src="{% static 'gorjeo_318-674515.png' %}" alt="Twitter" class="twitter"/>
+    </a>
+  </p>
+</h1>
+<div class="message_window" id="message_window"> 
+  <table class="message_box" id="message_box">
+    <tr class="proyect_title">
+      <td id="proyect_title">
+      </td>
+    </tr>
+    <tr class="proyect_description">
+      <td id="proyect_description">
+      </td>
+    </tr>
+    <tr class="proyect_code">
+      <td id="proyect_code">
+      </td>
+    </tr>
+  </table>  
+</div>
+<main>
+<table style= "width: 100%;">
+  <tr>
+    <td style= "width: 23%;">
+      <table class="table_style">
+        <tr height="50px">
+        </tr>
+        <tr>
+          <td class="text_to_show">
+            CALENDARIO DE<br>
+            MIS PROYECTOS.</td>
+        </tr>
+        <tr>
+          <td class="calendar">
+            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23009688&ctz=America%2FArgentina%2FBuenos_Aires&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0&src=bmFub2NvZGluZzIwMDVAZ21haWwuY29t&color=%23039BE5" 
+            style="border-width:0" width="400px" height="910px" frameborder="1" scrolling="no"></iframe>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td style= "width: 54%;">
+      <table class="proyect_showcase">
+        <tr>
+          <td>
+            {% for item in proyects %}
+              <table class="container_code">
+                <tr>
+                  <td> <iframe src="{{ item.link }}" class="replit_showcase"></iframe> </td> 
+                  <td style="width: 300px;"> 
+                    <div class="title">{{ item.title }} </div>
+                    <div class="date">{{ item.date }} </div>
+                    <button class="button_more_info" id="{{ item.id }}">More Information</button>
+                  </td>
+                </tr>
+              </table>
+              <hr class="line"></hr>     
+            {% endfor %}
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td style= "width: 23%;">
+      <table class="table_2">
+        <tr style="height: 35px;">
+        </tr>
+        <tr>   
+          <td>
+            <a class="twitter-timeline" data-lang="en" data-width="400" data-height="995" data-theme="light" href="https://twitter.com/nano_coding?ref_src=twsrc%5Etfw">Tweets by nano_coding</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<main>
+</body>
+
+<input type="hidden" id="proyects-json" value="{{ proyects|queryset_to_json }}">
+
+</html>
+<script>
+
+function AddToSomething(class_to_add,class_to_use) {
+  const header = document.querySelector(class_to_use);
+  header.classList.add(class_to_add);
+}
+
+function RemoveFromSomething(class_to_remove,class_to_use) {
+  const header = document.querySelector(class_to_use);
+  header.classList.remove(class_to_remove);
+}
+
+function extendHeader() {
+  if (window.scrollY == 0) {
+
+    AddToSomething('extended',"h1")
+    AddToSomething('shadow',"h1")
+    AddToSomething("bigger",".twitter")
+    AddToSomething("bigger",".github")
+
+  }
+}
+
+function retractHeader() {
+  RemoveFromSomething("extended","h1")
+  RemoveFromSomething("shadow","h1")
+  RemoveFromSomething('bigger',".twitter")
+  RemoveFromSomething('bigger',".github")
+}
+
+var texto_header = document.getElementById("texto_header")
+
+texto_header.addEventListener("click", function() {
+
+  window.scrollTo({top: 0, behavior: "smooth"})
+
+})
+
+var message_window = document.getElementById("message_window");
+message_window.addEventListener('click',function(event){
+
+  if (event.target === message_window) {
+    message_window.classList.remove("enabled");
+  }
+})
+
+var buttons = document.getElementsByClassName('button_more_info');
+for (var i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener('click', function() {
+    var proyectId = this.getAttribute('id');
+    
+    var proyect = JSON.parse(document.getElementById('proyects-json').value);
+    
+    var proyect_title = document.getElementById("proyect_title");
+    var proyect_description = document.getElementById("proyect_description");
+    var proyect_code = document.getElementById("proyect_code");
+
+    proyect.forEach(element => {
+      if (element.id == proyectId){
+        proyect_title.textContent = element.title
+        proyect_description.textContent = element.description
+        proyect_code.textContent = "Code\n\n" + element.code + "\n\n This code may not be usable by being copy+pasted since the indentation may have been altered when loading."
+      }
+    });
+
+    message_window.classList.add("enabled");
+
+  });
+}
+
+window.addEventListener("scroll",function() {
+
+  if (window.scrollY > 0) {
+
+    AddToSomething("smaller","h1")
+    AddToSomething("smaller",".twitter")
+    AddToSomething("smaller",".github")
+
+  }
+
+  else {
+
+    RemoveFromSomething("smaller","h1")
+    RemoveFromSomething('smaller',".twitter")
+    RemoveFromSomething('smaller',".github")
+
+  }
+
+})
+
+</script> 
